@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	WIDTH  = 800
-	HEIGHT = 600
+	WIDTH  = 640
+	HEIGHT = 480
 )
 
 type Vec2[N ~int | ~float64] struct {
@@ -78,7 +78,7 @@ func (g *Game) handleMovement() {
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth int, screenHeight int) {
-	return 400, 300
+	return 320, 240
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -123,6 +123,9 @@ func main() {
 	playerImg, _, err := ebitenutil.NewImageFromFile("./assets/images/NinjaBlue2/SpriteSheet.png")
 	fatal.Log(err, errLogger, "cannot load playerImg")
 
+	beastImg, _, err := ebitenutil.NewImageFromFile("./assets/images/Beast/Beast.png")
+	fatal.Log(err, errLogger, "cannot load playerImg")
+
 	infoLogger.Info("Running game")
 	game := &Game{
 		Player: &Sprite{
@@ -132,17 +135,17 @@ func main() {
 		},
 		Sprites: []*Sprite{
 			{
-				Img:      playerImg,
+				Img:      beastImg,
 				Pos:      NewVec2(50.0, 100),
 				Velocity: NewVec2(0.0, 0),
 			},
 			{
-				Img:      playerImg,
+				Img:      beastImg,
 				Pos:      NewVec2(100.0, 100),
 				Velocity: NewVec2(0.0, 0),
 			},
 			{
-				Img:      playerImg,
+				Img:      beastImg,
 				Pos:      NewVec2(150.0, 100),
 				Velocity: NewVec2(0.0, 0),
 			},
