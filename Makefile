@@ -1,5 +1,6 @@
 COMPILER := go
 BINNAME := rpg-tutorial
+TARGETOS := windows
 
 BUILDCMD := $(COMPILER) build
 OUTPUT := -o $(BINNAME)
@@ -14,15 +15,15 @@ all: build win ## Build the binary for Linux and Windows
 
 build: main.go ## Build the binary for Linux
 	@echo "Building $(BINNAME) for Linux"
-	@$(BUILDCMD) $(OUTPUT) $(FLAGS)
+	@GOOS=$(TARGETOS) $(BUILDCMD) $(OUTPUT) $(FLAGS)
 
 win: main.go ## Build the binary for a niche gaming os (Windows)
 	@echo "Building $(BINNAME) for Windows"
-	@$(BUILDCMD) $(OUTPUT).exe $(FLAGS)
+	@GOOS=$(TARGETOS) $(BUILDCMD) $(OUTPUT).exe $(FLAGS)
 
 run: main.go ## Run the main.go
 	@echo "Running $(BINNAME)"
-	@$(RUNCMD) $(FLAGS) .
+	@GOOS=$(TARGETOS) $(RUNCMD) $(FLAGS) .
 
 clean: ## Clean up
 	@echo "Cleaning up"
