@@ -1,11 +1,12 @@
 package main
 
-func clamp[N ~int | ~float64](value, min, max N) N {
-	if value < min {
-		return min
+func sign[N Number](n N) N {
+	switch {
+	case n > 0:
+		return 1
+	case n < 0:
+		return -1
+	default:
+		return 0
 	}
-	if value > max {
-		return max
-	}
-	return value
 }
