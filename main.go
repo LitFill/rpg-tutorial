@@ -21,8 +21,10 @@ type Number interface {
 }
 
 const (
-	WIDTH  = 640
-	HEIGHT = 480
+	WIDTH        = 640
+	HEIGHT       = 480
+	SPRITE_WIDTH = 16
+	SPRITE_HEIGTH
 )
 
 type Vec2[N Number] struct {
@@ -83,13 +85,19 @@ func (v *Vec2[N]) Sign() *Vec2[N] {
 	}
 }
 
+func (v *Vec2[N]) String() string {
+	return fmt.Sprintf("Vec2(%v, %v)", v.X, v.Y)
+}
+
 func NewVec2[N Number](x, y N) *Vec2[N] { return &Vec2[N]{x, y} }
 func NewVec2Zero[N Number]() *Vec2[N]   { return NewVec2[N](0, 0) }
 
-var MOVE_LEFT = NewVec2(-2.0, 0.0)
-var MOVE_RIGHT = NewVec2(2.0, 0.0)
-var MOVE_UP = NewVec2(0.0, -2.0)
-var MOVE_DOWN = NewVec2(0.0, 2.0)
+var (
+	MOVE_LEFT  = NewVec2(-2.0, 0.0)
+	MOVE_RIGHT = NewVec2(2.0, 0.0)
+	MOVE_UP    = NewVec2(0.0, -2.0)
+	MOVE_DOWN  = NewVec2(0.0, 2.0)
+)
 
 type Sprite struct {
 	Img      *ebiten.Image
@@ -120,6 +128,7 @@ func (g *Game) Update() error {
 			enemy.Velocity = enemy.Velocity.Add(dist).Sign()
 
 			enemy.Pos.Add_nr(enemy.Velocity)
+			enemy.Velocity.Zero()
 		}
 	}
 
@@ -139,13 +148,13 @@ func (g *Game) handlePlayerMovement() {
 	if moveLeft && g.Player.Pos.X > 0 {
 		arah.Add_nr(MOVE_LEFT)
 	}
-	if moveRight && g.Player.Pos.X < float64(w-16) {
+	if moveRight && g.Player.Pos.X < float64(w-SPRITE_WIDTH) {
 		arah.Add_nr(MOVE_RIGHT)
 	}
 	if moveUp && g.Player.Pos.Y > 0 {
 		arah.Add_nr(MOVE_UP)
 	}
-	if moveDown && g.Player.Pos.Y < float64(h-16) {
+	if moveDown && g.Player.Pos.Y < float64(h-SPRITE_HEIGTH) {
 		arah.Add_nr(MOVE_DOWN)
 	}
 
@@ -167,7 +176,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	screen.DrawImage(
 		g.Player.Img.SubImage(image.Rect(
 			0, 0,
-			16, 16,
+			SPRITE_WIDTH, SPRITE_HEIGTH,
 		)).(*ebiten.Image),
 		opts,
 	)
@@ -179,7 +188,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawImage(
 			sprite.Img.SubImage(image.Rect(
 				0, 0,
-				16, 16,
+				SPRITE_WIDTH, SPRITE_HEIGTH,
 			)).(*ebiten.Image),
 			opts,
 		)
@@ -208,14 +217,14 @@ func main() {
 		Player: &Sprite{
 			Img:      playerImg,
 			Pos:      NewVec2(50.0, 50),
-			Velocity: NewVec2(0.0, 0),
+			Velocity: NewVec2Zero[float64](),
 		},
 		Enemies: []*Enemy{
 			{
 				Sprite: &Sprite{
 					Img:      beastImg,
 					Pos:      NewVec2(50.0, 100),
-					Velocity: NewVec2(0.0, 0),
+					Velocity: NewVec2Zero[float64](),
 				},
 				IsFollowPlayer: true,
 			},
@@ -223,17 +232,17 @@ func main() {
 				Sprite: &Sprite{
 					Img:      beastImg,
 					Pos:      NewVec2(100.0, 100),
-					Velocity: NewVec2(0.0, 0),
+					Velocity: NewVec2Zero[float64](),
 				},
-				IsFollowPlayer: false,
+				IsFollowPlayer: true,
 			},
 			{
 				Sprite: &Sprite{
 					Img:      beastImg,
 					Pos:      NewVec2(150.0, 100),
-					Velocity: NewVec2(0.0, 0),
+					Velocity: NewVec2Zero[float64](),
 				},
-				IsFollowPlayer: true,
+				IsFollowPlayer: false,
 			},
 		},
 	}
@@ -243,5 +252,5 @@ func main() {
 		"game", game,
 	)
 
-	infoLogger.Info("Closing game", "game state", game)
+	infoLogger.Info("Closing game", "game state", game, "player pos", game.Player.Pos.String())
 }
